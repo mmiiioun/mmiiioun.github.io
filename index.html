@@ -25,10 +25,9 @@ iframe.on{opacity:1}
 .l1,.l2{display:flex;align-items:center;white-space:nowrap;line-height:1;min-height:1em}
 .l1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:clamp(46px,11.5vw,140px);letter-spacing:-0.02em}
 .l2{font-style:italic;font-weight:700;font-size:clamp(46px,11.5vw,136px);letter-spacing:-0.03em;margin-top:.06em}
-.l2{position:relative}
-#t2{opacity:0;transition:opacity .35s}
-.bb{position:absolute;overflow:visible;pointer-events:none}
-.lab{position:absolute;font-family:"JetBrains Mono",ui-monospace,monospace;font-style:normal;font-weight:600;font-size:clamp(10px,1.4vw,13px);letter-spacing:0;line-height:1;color:#fff;background:#21918c;padding:4px 7px;border-radius:3px 3px 3px 0;opacity:0;transition:opacity .25s;white-space:nowrap}
+.slot{display:block;height:1.12em;overflow:hidden;padding:0 .1em}
+.slot>div{display:flex;flex-direction:column;transition:transform .32s cubic-bezier(.6,0,.2,1);will-change:transform}
+.slot span{display:block;height:1.12em;line-height:1.12em;text-align:center}
 .cur{display:inline-block;width:.045em;min-width:2px;height:.95em;background:#24212b;margin-left:.06em;visibility:hidden}
 .cur.on{visibility:visible;animation:blink .9s steps(1) infinite}
 .bar{margin-top:clamp(22px,4vw,40px);width:min(220px,50vw);height:3px;border-radius:2px;background:linear-gradient(90deg,#440154,#3b528b,#21918c,#5ec962,#fde725);clip-path:inset(0 100% 0 0 round 2px);transition:clip-path .5s cubic-bezier(.3,.7,.2,1)}
@@ -69,23 +68,12 @@ iframe.on{opacity:1}
   function load(){ if(!fr.src) fr.src=fr.getAttribute('data-src'); }
   async function run(){
     t1.textContent='AI \u00d7 SECURITY';
-    t2.textContent='PORTFOLIO';
+    var words=['ROBOTICS','LLM','XAI','ANOMALY','PORTFOLIO'];
+    t2.innerHTML='<div class="slot"><div>'+words.map(function(w){return '<span>'+w+'</span>';}).join('')+'</div></div>';
     if(document.fonts&&document.fonts.ready) await Promise.race([document.fonts.ready,wait(1500)]);
-    var l2=t2.parentNode,w=t2.offsetWidth,ht=l2.offsetHeight,pad=Math.max(8,Math.round(ht*.1)),ns='http://www.w3.org/2000/svg';
-    var svg=document.createElementNS(ns,'svg'); svg.setAttribute('class','bb');
-    svg.setAttribute('width',w+pad*2); svg.setAttribute('height',ht+pad);
-    svg.style.left=(t2.offsetLeft-pad)+'px'; svg.style.top=(-pad/2)+'px';
-    var r=document.createElementNS(ns,'rect');
-    r.setAttribute('x',1);r.setAttribute('y',1);r.setAttribute('width',w+pad*2-2);r.setAttribute('height',ht+pad-2);
-    r.setAttribute('fill','none');r.setAttribute('stroke','#21918c');r.setAttribute('stroke-width',2.5);
-    var P=2*(w+pad*2+ht+pad); r.style.strokeDasharray=P; r.style.strokeDashoffset=P; r.style.transition='stroke-dashoffset .6s cubic-bezier(.5,0,.2,1)';
-    svg.appendChild(r); l2.appendChild(svg);
-    var lab=document.createElement('div'); lab.className='lab'; lab.textContent='portfolio 0.99'; l2.appendChild(lab);
-    lab.style.left=(t2.offsetLeft-pad)+'px'; lab.style.top=(-pad/2-lab.offsetHeight)+'px';
-    await wait(150); r.getBoundingClientRect(); r.style.strokeDashoffset=0;
-    await wait(620); lab.style.opacity=1;
-    await wait(180); t2.style.opacity=1;
-    await wait(380);
+    var col=t2.querySelector('.slot>div');
+    for(var i=1;i<words.length;i++){ await wait(i===1?380:330); col.style.transform='translateY(-'+(i*1.12)+'em)'; }
+    await wait(340);
     bar.classList.add('on'); load(); await wait(650);
     animDone=true; maybe();
   }
